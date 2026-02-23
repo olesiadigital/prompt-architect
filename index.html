@@ -18,6 +18,11 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        
+        /* Точная пропорция для ваших изображений 2528x1696 */
+        .aspect-custom {
+            aspect-ratio: 2528 / 1696;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
@@ -129,6 +134,7 @@
                 const textArea = document.createElement("textarea");
                 textArea.value = text;
                 document.body.appendChild(textArea);
+                textArea.focus();
                 textArea.select();
                 try {
                     document.execCommand('copy');
@@ -151,26 +157,31 @@
                 <div className="p-4 md:p-8 max-w-6xl mx-auto">
                     <header className="mb-10 text-center flex flex-col items-center">
                         <div className="flex items-center justify-center gap-4 mb-2">
-                            <h1 className="text-4xl font-black bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">Prompt Architect</h1>
-                            <button onClick={reset} className="text-slate-500 hover:text-white transition-colors">
+                            <h1 className="text-4xl font-black bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent tracking-tight">Prompt Architect</h1>
+                            <button onClick={reset} className="text-slate-500 hover:text-white transition-colors p-2 rounded-full hover:bg-white/5">
                                 <Icon name="refresh-ccw" size={24} />
                             </button>
                         </div>
                         <p className="text-slate-400 italic">Select style and enter description <span className="text-sky-400 font-bold uppercase tracking-tighter">in English</span></p>
                     </header>
 
-                    {/* Сетка шаблонов 3:2 */}
+                    {/* Сетка шаблонов с обновленной пропорцией 2528:1696 */}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-10">
                         {templates.map(t => (
                             <button key={t.id} onClick={() => { setSelectedTemplate(t); setIsInputVisible(false); setPrompts({gemini:'', generic:''}); }}
-                                className={`group relative aspect-[3/2] rounded-[2rem] overflow-hidden border-2 transition-all duration-300 ${selectedTemplate?.id === t.id ? 'border-sky-500 ring-4 ring-sky-500/10 scale-105 shadow-2xl shadow-sky-500/20' : 'border-slate-800 hover:border-slate-700'}`}>
+                                className={`group relative aspect-custom rounded-[2rem] overflow-hidden border-2 transition-all duration-300 ${selectedTemplate?.id === t.id ? 'border-sky-500 ring-4 ring-sky-500/10 scale-105 shadow-2xl shadow-sky-500/20' : 'border-slate-800 hover:border-slate-700'}`}>
                                 <div className="absolute inset-0 bg-slate-900 flex items-center justify-center">
-                                    <img src={t.image} alt="" className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" 
+                                    <img 
+                                        src={t.image} 
+                                        alt={t.name} 
+                                        className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500" 
                                         onError={(e) => { e.target.style.display='none'; }} 
                                     />
                                     <div className="w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-bottom-[60px] opacity-40 transition-transform group-hover:scale-110" style={{ borderBottomColor: t.color }}></div>
                                 </div>
-                                <div className="absolute bottom-0 inset-x-0 p-3 bg-slate-950/80 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-center border-t border-white/5">{t.name}</div>
+                                <div className="absolute bottom-0 inset-x-0 p-3 bg-slate-950/80 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-center border-t border-white/5 group-hover:bg-slate-900 transition-colors">
+                                    {t.name}
+                                </div>
                             </button>
                         ))}
                     </div>
